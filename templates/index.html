@@ -5,12 +5,13 @@
   <input name="name" type="text" autocomplete="off" autofocus placeholder="Name">
   <select name="sport">
     <option disabled selected value="">Sport</option>
-    <option value="Basketball">Basketball</option>
-    <option value="Lawn Tennis">Lawn Tennis</option>
-    <option value="Soccer">Soccer</option>
-    <option value="Table Tennis">Table Tennis</option>
-    <option value="Badminton">Badminton</option>
+    {% for sport in sports %}
+    <option value="{{sport}}">{{sport}}</option>
+    {% endfor %}
   </select>
+<!--  {% for sport in sports %}-->
+<!--  <input name="sport" type="radio" value="{{sport}}">{{sport}}-->
+<!--  {% endfor %}-->
   <input type="submit" value="Register">
 </form>
 {%endblock%}
