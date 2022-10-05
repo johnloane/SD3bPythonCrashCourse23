@@ -1,11 +1,16 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
+from flask_mysqldb import MySQL
 
 SPORTS = ["Basketball", "Lawn Tennis", "Soccer", "Table Tennis", "Badminton"]
 
-REGISTRANTS = {}
-
 app = Flask(__name__)
 
+app.config['MYSQL_HOST'] = '*****'
+app.config['MYSQL_USER'] = '*****'
+app.config['MYSQL_PASSWORD'] = '*****'
+app.config['MYSQL_DB'] = '*****'
+
+mysql = MySQL(app)
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -25,7 +30,19 @@ def register():
         return render_template("error.html", message="Missing sport")
     if sport not in SPORTS:
         return render_template("error.html", message="Stop messing with my website")
-    return render_template("success.html")
+    cursor = mysql.connection.cursor()
+    cursor.execute("insert into registrants(name, sport) values (%s, %s)", (name, sport))
+    mysql.connection.commit()
+    cursor.close()
+    return redirect("/registrants")
+
+
+@app.route("/registrants")
+def registrants():
+    cur = mysql.connection.cursor()
+    cur.execute("select * from registrants")
+    result = cur.fetchall()
+    return render_template("registrants.html", registrants=result)
 
 if __name__ == '__main__':
     app.run()
